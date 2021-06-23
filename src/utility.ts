@@ -1,90 +1,63 @@
 "use strict";
 
-function leftIndex(index: number, arrayLength: number): number {
-  return (index - 1 + arrayLength) % arrayLength;
-}
+const helper = state => {      
 
-function rightIndex(index: number, arrayLength: number): number {
-  return (index + 1 + arrayLength) % arrayLength;
-}
+  function getLeftIndex(startingIndex, arrayLength) {
+    return (startingIndex - 1 + arrayLength) % arrayLength;
+  }
 
-// todo: for a given set of coordinates on the board, get all the neighbors
+  function getRightIndex(startingIndex, arrayLength) {
+    return (startingIndex + 1 + arrayLength) % arrayLength;
+  }
 
-const helper = (state) => {
+  function getLeftElement(array, startingIndex) {
+    return array[getLeftIndex(startingIndex, array.length)];
+  }
+
+  function getRightElement(array, startingIndex) {
+    return array[getRightIndex(startingIndex, array.length)];
+  }  
+
   function getLeft(row, cell) {
-    return cell == 0
-      ? state.board[row][state.width - 1]
-      : state.board[row][cell - 1];
+    const currentRow = state.board[row];
+    return getLeftElement(currentRow, cell);
   }
 
   function getUpperLeft(row, cell) {
-    if (row == 0) {
-      return cell == 0
-        ? state.board[state.height - 1][state.width - 1]
-        : state.board[state.height - 1][cell - 1];
-    } else {
-      return cell == 0
-        ? state.board[row - 1][state.width - 1]
-        : state.board[row - 1][cell - 1];
-    }
-  }
+    const rowAbove = getLeftElement(state.board, row);
+    return getLeftElement(rowAbove, cell);
+  };
 
   function getUpper(row, cell) {
-    return row == 0
-      ? state.board[state.height - 1][cell]
-      : state.board[row - 1][cell];
-  }
+    return getLeftElement(state.board, row)[cell];
+  };
 
   function getUpperRight(row, cell) {
-    if (row == 0) {
-      return cell == state.width - 1
-        ? state.board[state.height - 1][0]
-        : state.board[state.height - 1][cell + 1];
-    } else {
-      return cell == state.width - 1
-        ? state.board[row - 1][0]
-        : state.board[row - 1][cell + 1];
-    }
-  }
+    const rowAbove = getLeftElement(state.board, row);
+    return getRightElement(rowAbove, cell);
+  };
 
   function getRight(row, cell) {
-    return cell == state.width - 1
-      ? state.board[row][0]
-      : state.board[row][cell + 1];
-  }
+    const currentRow = state.board[row];
+    return getRightElement(currentRow, cell);
+  };
 
   function getLowerRight(row, cell) {
-    if (row == state.height - 1) {
-      return cell == state.width - 1
-        ? state.board[0][0]
-        : state.board[state.height - 1][cell + 1];
-    } else {
-      return cell == state.width - 1
-        ? state.board[row + 1][0]
-        : state.board[row + 1][cell + 1];
-    }
-  }
+    const rowBelow = getRightElement(state.board, row);
+    return getRightElement(rowBelow, cell);
+  };
 
   function getLower(row, cell) {
-    return row == state.height - 1
-      ? state.board[0][cell]
-      : state.board[row + 1][cell];
-  }
+    return getRightElement(state.board, row)[cell];
+  };
 
   function getLowerLeft(row, cell) {
-    if (row == state.height - 1) {
-      return cell == 0
-        ? state.board[0][state.width - 1]
-        : state.board[0][cell - 1];
-    } else {
-      return cell == 0
-        ? state.board[row + 1][state.width - 1]
-        : state.board[row + 1][cell - 1];
-    }
-  }
+    const rowBelow = getRightElement(state.board, row);
+    return getLeftElement(rowBelow, cell);
+  };
 
   return {
-    getNeighbors: function (row, cell) {
+    getNeighbors: function(row, cell) {
       return {
         left: getLeft(row, cell),
         upperLeft: getUpperLeft(row, cell),
@@ -93,10 +66,10 @@ const helper = (state) => {
         right: getRight(row, cell),
         lowerRight: getLowerRight(row, cell),
         lower: getLower(row, cell),
-        lowerLeft: getLowerLeft(row, cell),
-      };
-    },
+        lowerLeft: getLowerLeft(row, cell)
+      }
+    }
   };
-};
+}
 
 export default helper;
