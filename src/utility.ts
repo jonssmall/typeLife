@@ -1,75 +1,89 @@
 "use strict";
 
-const helper = state => {      
+import { Game } from "./models";
 
-  function getLeftIndex(startingIndex, arrayLength) {
+export default function (game: Game): NeighborHelper {
+  function getLeftIndex(startingIndex: number, arrayLength: number): number {
     return (startingIndex - 1 + arrayLength) % arrayLength;
   }
 
-  function getRightIndex(startingIndex, arrayLength) {
+  function getRightIndex(startingIndex: number, arrayLength: number): number {
     return (startingIndex + 1 + arrayLength) % arrayLength;
   }
 
-  function getLeftElement(array, startingIndex) {
+  function getLeftElement<T>(array: T[], startingIndex: number): T {
     return array[getLeftIndex(startingIndex, array.length)];
   }
 
-  function getRightElement(array, startingIndex) {
+  function getRightElement<T>(array: T[], startingIndex: number) {
     return array[getRightIndex(startingIndex, array.length)];
-  }  
-
-  function getLeft(row, cell) {
-    const currentRow = state.board[row];
-    return getLeftElement(currentRow, cell);
   }
 
-  function getUpperLeft(row, cell) {
-    const rowAbove = getLeftElement(state.board, row);
-    return getLeftElement(rowAbove, cell);
-  };
+  function getLeft(rowIndex: number, cellIndex: number): boolean {
+    const currentRow = game[rowIndex];
+    return getLeftElement(currentRow, cellIndex);
+  }
 
-  function getUpper(row, cell) {
-    return getLeftElement(state.board, row)[cell];
-  };
+  function getUpperLeft(rowIndex: number, cellIndex: number): boolean {
+    const rowAbove = getLeftElement(game, rowIndex);
+    return getLeftElement(rowAbove, cellIndex);
+  }
 
-  function getUpperRight(row, cell) {
-    const rowAbove = getLeftElement(state.board, row);
-    return getRightElement(rowAbove, cell);
-  };
+  function getUpper(rowIndex: number, cellIndex: number): boolean {
+    return getLeftElement(game, rowIndex)[cellIndex];
+  }
 
-  function getRight(row, cell) {
-    const currentRow = state.board[row];
-    return getRightElement(currentRow, cell);
-  };
+  function getUpperRight(rowIndex: number, cellIndex: number): boolean {
+    const rowAbove = getLeftElement(game, rowIndex);
+    return getRightElement(rowAbove, cellIndex);
+  }
 
-  function getLowerRight(row, cell) {
-    const rowBelow = getRightElement(state.board, row);
-    return getRightElement(rowBelow, cell);
-  };
+  function getRight(rowIndex: number, cellIndex: number): boolean {
+    const currentRow = game[rowIndex];
+    return getRightElement(currentRow, cellIndex);
+  }
 
-  function getLower(row, cell) {
-    return getRightElement(state.board, row)[cell];
-  };
+  function getLowerRight(rowIndex: number, cellIndex: number) {
+    const rowBelow = getRightElement(game, rowIndex);
+    return getRightElement(rowBelow, cellIndex);
+  }
 
-  function getLowerLeft(row, cell) {
-    const rowBelow = getRightElement(state.board, row);
-    return getLeftElement(rowBelow, cell);
-  };
+  function getLower(rowIndex: number, cellIndex: number) {
+    return getRightElement(game, rowIndex)[cellIndex];
+  }
+
+  function getLowerLeft(rowIndex: number, cellIndex: number) {
+    const rowBelow = getRightElement(game, rowIndex);
+    return getLeftElement(rowBelow, cellIndex);
+  }
 
   return {
-    getNeighbors: function(row, cell) {
+    getNeighbors: function (rowIndex: number, cellIndex: number): Neighbors {
       return {
-        left: getLeft(row, cell),
-        upperLeft: getUpperLeft(row, cell),
-        upper: getUpper(row, cell),
-        upperRight: getUpperRight(row, cell),
-        right: getRight(row, cell),
-        lowerRight: getLowerRight(row, cell),
-        lower: getLower(row, cell),
-        lowerLeft: getLowerLeft(row, cell)
-      }
-    }
+        left: getLeft(rowIndex, cellIndex),
+        upperLeft: getUpperLeft(rowIndex, cellIndex),
+        upper: getUpper(rowIndex, cellIndex),
+        upperRight: getUpperRight(rowIndex, cellIndex),
+        right: getRight(rowIndex, cellIndex),
+        lowerRight: getLowerRight(rowIndex, cellIndex),
+        lower: getLower(rowIndex, cellIndex),
+        lowerLeft: getLowerLeft(rowIndex, cellIndex),
+      };
+    },
   };
 }
 
-export default helper;
+type NeighborHelper = {
+  getNeighbors: (rowIndex: number, cellIndex: number) => Neighbors;
+};
+
+export interface Neighbors {
+  left: boolean;
+  upperLeft: boolean;
+  upper: boolean;
+  upperRight: boolean;
+  right: boolean;
+  lowerRight: boolean;
+  lower: boolean;
+  lowerLeft: boolean;
+}
